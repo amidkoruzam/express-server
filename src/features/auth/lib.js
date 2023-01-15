@@ -1,4 +1,4 @@
-export const allowOnlyAuthenticated = (req, res, next) => {
-  if (req.session.userId) next();
-  res.status(401).send("Access forbidden.");
-};
+import bcrypt from "bcrypt";
+
+export const verifyPassword = (passwordToCheck, hashedPassword) =>
+  bcrypt.compare(passwordToCheck, hashedPassword);
