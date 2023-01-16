@@ -7,6 +7,7 @@ services:
       - ".:/var/www/app"
     networks:
       - app
+      - redis
 
   db:
     image: postgres:latest
@@ -20,7 +21,13 @@ services:
     networks:
       - app
 
+  redis:
+    image: redis:latest
+    networks:
+      - redis
+
 volumes:
   database:
 networks:
   app:
+  redis:
