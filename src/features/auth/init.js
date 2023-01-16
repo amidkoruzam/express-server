@@ -1,11 +1,22 @@
 import passport from "passport";
 import LocalStrategy from "passport-local";
 import session from "express-session";
+import { createClient } from "redis";
+import connectRedis from "connect-redis";
 
 import { getUserById, getUserByName } from "../user/index.js";
 import { verifyPassword } from "./lib.js";
 
+const redisClient = createClient({
+  legacyMode: true,
+  socket: { host: "redis" },
+});
+
 export const initAuth = (app) => {
+  const RedisStore = connectRedis(session);
+
+  redisClient.connect().catch(console.error);
+
   passport.use(
     new LocalStrategy(
       { usernameField: "name" },
@@ -39,6 +50,7 @@ export const initAuth = (app) => {
       secret: "secret",
       saveUninitialized: false,
       resave: false,
+      store: new RedisStore({ client: redisClient }),
     })
   );
 
