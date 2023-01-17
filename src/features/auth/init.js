@@ -46,8 +46,8 @@ export const initAuth = (app) => {
 
   app.use(
     session({
-      name: "qid",
-      secret: "secret",
+      name: process.env.SESSION_ID,
+      secret: process.env.SESSION_SECRET,
       saveUninitialized: false,
       resave: false,
       store: new RedisStore({ client: redisClient }),
