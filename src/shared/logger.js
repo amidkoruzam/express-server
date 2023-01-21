@@ -16,7 +16,7 @@ const options = {
 
   file: {
     format: formatting,
-    filename: "log.txt",
+    filename: "logs/combined.log",
   },
 
   console: {
