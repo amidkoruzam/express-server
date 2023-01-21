@@ -15,50 +15,40 @@ const AUTH_ERROR = {
 };
 
 export const login = (req, res, next) => {
-  const log = logger.child({ requestId: crypto.randomUUID() });
+  let logOpts = { requestId: crypto.randomUUID(), path: req.path };
 
   passport.authenticate("local", async (err, user) => {
     if (err) {
-      log.error(
-        "Error while authenticating during login request. Error: %s",
-        JSON.stringify(err)
-      );
-
+      logger.error(err, logOpts);
       return res.status(500).json(apiResponse(null, AUTH_ERROR.UNKNOWN_ERROR));
     }
 
     if (!user) {
-      log.info("Could not find user matching login request");
+      logger.info("user not found", logOpts);
       return res.status(404).json(apiResponse(null, AUTH_ERROR.USER_NOT_FOUND));
     }
+
+    logOpts = { ...logOpts, user: { id: user.id } };
 
     try {
       await new Promise((res, rej) =>
         req.login(user, (error) => (error ? rej(error) : res()))
       );
     } catch (error) {
-      log.error(
-        "User could not log in. User: %s. Error: %s",
-        JSON.stringify({ id: user.id }),
-        JSON.stringify(error)
-      );
+      logger.error(error, logOpts);
 
       return res
         .status(500)
         .json(apiResponse(null, AUTH_ERROR.COULD_NOT_LOGIN));
     }
 
-    log.info(
-      "Login request completed successfully. User: %s",
-      JSON.stringify({ id: user.id })
-    );
-
+    logger.info("user logged in", logOpts);
     return res.json(apiResponse(mapUserToResponse(user)));
   })(req, res, next);
 };
 
 export const register = async (req, res) => {
-  const log = logger.child({ requestId: crypto.randomUUID() });
+  let logOpts = { requestId: crypto.randomUUID(), path: req.path };
   const { name, password } = req.body;
 
   let user;
@@ -66,16 +56,10 @@ export const register = async (req, res) => {
   try {
     user = await createUser({ name, password });
 
-    log.info(
-      "User created during register request. User: %s",
-      JSON.stringify({ id: user.id })
-    );
+    logOpts = { ...logOpts, user: { id: user.id } };
+    logger.info("new user created", logOpts);
   } catch (error) {
-    log.error(
-      "Could not create user during register request. User: %s. Error: %s",
-      JSON.stringify({ id: user.id }),
-      JSON.stringify(error)
-    );
+    log.error(error, logOpts);
 
     return res
       .status(500)
@@ -87,43 +71,28 @@ export const register = async (req, res) => {
       req.login(user, (error) => (error ? rej(error) : res()))
     );
   } catch (error) {
-    log.error(
-      "Could not authenticate user during register request. User: %s. Error: %s",
-      JSON.stringify({ id: user.id }),
-      JSON.stringify(error)
-    );
-
+    logger.error(error, logOpts);
     return res.status(500).json(apiResponse(null, AUTH_ERROR.COULD_NOT_LOGIN));
   }
 
-  log.info(
-    "Register new user request completed successfully. User: %s",
-    JSON.stringify({ id: user.id })
-  );
-
+  logger.info("user registered", logOpts);
   return res.json(apiResponse(mapUserToResponse(user)));
 };
 
 export const logout = async (req, res) => {
+  let logOpts = { user: { id: req.user?.id } };
+
   try {
     await new Promise((res, rej) =>
       req.logout((error) => (error ? rej(error) : res()))
     );
   } catch (error) {
-    log.error(
-      "Could not logout user during logout logout. User: %s. Error: %s",
-      JSON.stringify({ id: user.id }),
-      JSON.stringify(error)
-    );
+    logger.error(error, logOpts);
 
     return res.status(500).json(apiResponse(null, AUTH_ERROR.COULD_NOT_LOGOUT));
   }
 
-  log.info(
-    "Logout request completed successfully. User: %s",
-    JSON.stringify({ id: user.id })
-  );
-
+  logger.info("user logged out", logOpts);
   return res.sendStatus(200);
 };
 
