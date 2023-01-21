@@ -7,6 +7,12 @@ const formatting = format.combine(
 );
 
 const options = {
+  error: {
+    level: "error",
+    format: formatting,
+    filename: "logs/errors.log",
+  },
+
   file: {
     format: formatting,
     filename: "log.txt",
@@ -26,7 +32,10 @@ if (process.env.MODE === "development") {
 }
 
 if (process.env.MODE === "production") {
-  config.transports.push(new Winston.transports.File(options.file));
+  config.transports.push(
+    new Winston.transports.File(options.file),
+    new Winston.transports.File(options.error)
+  );
 }
 
 export const logger = Winston.createLogger(config);
