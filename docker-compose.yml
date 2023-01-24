@@ -26,8 +26,19 @@ services:
     networks:
       - redis
 
+  promtail:
+    image: grafana/promtail
+    volumes: 
+      - tmp/log:/var/log
+      - volumes/promtail:/etc/promtail
+    restart: unless-stopped
+    command: -config.file=promtail.yml
+    networks:
+      - loki
+
 volumes:
   database:
 networks:
   app:
   redis:
+  loki:
