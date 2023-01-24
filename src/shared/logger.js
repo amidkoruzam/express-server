@@ -11,12 +11,12 @@ const options = {
   error: {
     level: "error",
     format: formatting,
-    filename: "logs/errors.log",
+    filename: "tmp/log/errors.log",
   },
 
   file: {
     format: formatting,
-    filename: "logs/combined.log",
+    filename: "tmp/log/combined.log",
   },
 
   console: {
