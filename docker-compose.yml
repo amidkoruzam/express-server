@@ -45,7 +45,17 @@ services:
     restart: unless-stopped
     command: -config.file=loki.yml
     networks:
-      - loki    
+      - loki
+
+  grafana:
+    image: grafana/grafana
+    volumes:
+      - volumes/grafana:/var/lib/grafana
+    ports:
+      - "3001:3000"
+    restart: unless-stopped
+    networks:
+      - loki
 
 volumes:
   database:
