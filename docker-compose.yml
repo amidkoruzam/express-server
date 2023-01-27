@@ -29,8 +29,8 @@ services:
   promtail:
     image: grafana/promtail
     volumes: 
-      - tmp/log:/var/log
-      - volumes/promtail:/etc/promtail
+      - ./tmp/log:/var/log
+      - ./volumes/promtail:/etc/promtail
     restart: unless-stopped
     command: -config.file=promtail.yml
     networks:
@@ -39,7 +39,7 @@ services:
   loki:
     image: grafana/loki
     volumes:
-      - volumes/loki:/etc/loki
+      - ./volumes/loki:/etc/loki
     ports:
       - "3100:3100"
     restart: unless-stopped
@@ -50,7 +50,7 @@ services:
   grafana:
     image: grafana/grafana
     volumes:
-      - volumes/grafana:/var/lib/grafana
+      - ./volumes/grafana:/var/lib/grafana
     ports:
       - "3001:3000"
     restart: unless-stopped
