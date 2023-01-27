@@ -25,18 +25,14 @@ const options = {
 };
 
 const config = {
-  transports: [],
+  transports: [
+    new Winston.transports.File(options.file),
+    new Winston.transports.File(options.error),
+  ],
 };
 
 if (process.env.MODE === "development") {
   config.transports.push(new Winston.transports.Console(options.console));
-}
-
-if (process.env.MODE === "production") {
-  config.transports.push(
-    new Winston.transports.File(options.file),
-    new Winston.transports.File(options.error)
-  );
 }
 
 export const logger = Winston.createLogger(config);
