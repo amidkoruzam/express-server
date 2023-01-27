@@ -36,6 +36,17 @@ services:
     networks:
       - loki
 
+  loki:
+    image: grafana/loki
+    volumes:
+      volumes/loki:/etc/loki
+    ports:
+      - "3100:3100"
+    restart: unless-stopped
+    command: -config.file=loki.yml
+    networks:
+      - loki    
+
 volumes:
   database:
 networks:
