@@ -39,7 +39,7 @@ services:
   loki:
     image: grafana/loki
     volumes:
-      volumes/loki:/etc/loki
+      - volumes/loki:/etc/loki
     ports:
       - "3100:3100"
     restart: unless-stopped
