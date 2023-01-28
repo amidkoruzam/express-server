@@ -3,7 +3,6 @@ import Winston, { format } from "winston";
 const formatting = format.combine(
   format.timestamp(),
   format.splat(),
-  format.simple(),
   format.errors({ stack: true })
 );
 
