@@ -1,7 +1,7 @@
 import { apiResponse } from "../../shared/api.js";
 import { logger } from "../../shared/logger.js";
 import { mapUserToResponse } from "./lib.js";
-import { getUsers } from "./repository.js";
+import { getUserById, getUsers } from "./repository.js";
 
 const ERROR = {
   COULD_NOT_DELETE_USER: "could_not_delete_user",
@@ -10,6 +10,11 @@ const ERROR = {
 export const showUsers = async (req, res) => {
   const users = await getUsers();
   return res.send(apiResponse(users.map(mapUserToResponse)));
+};
+
+export const getUser = async (req, res) => {
+  const user = await getUserById(req.params.id);
+  return res.send(apiResponse(mapUserToResponse(user)));
 };
 
 export const deleteUser = async (req, res) => {

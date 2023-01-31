@@ -8,7 +8,7 @@ import {
   register,
 } from "./features/auth/index.js";
 import { self } from "./features/auth/router.js";
-import { showUsers } from "./features/user/router.js";
+import { getUser, showUsers } from "./features/user/router.js";
 
 const app = express();
 
@@ -22,6 +22,7 @@ app.get("/logout", logout);
 
 app.get("/self", allowOnlyAuthenticated, self);
 
+app.get("/users/:id", allowOnlyAuthenticated, getUser);
 app.get("/users", allowOnlyAuthenticated, showUsers);
 
 app.listen(3000);
